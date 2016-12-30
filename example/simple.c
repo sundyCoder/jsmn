@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../jsmn.h"
 
+
 /*
  * A small example of jsmn parsing when JSON structure is known and number of
  * tokens is predictable.
@@ -47,11 +48,6 @@ int main() {
 			sprintf(tmp,"%.*s",t[i+1].end-t[i+1].start,JSON_STRING + t[i+1].start);
 			result = tmp[0] - '0';
 			printf("result:%d\n",result);
-		
-			//printf("- result: %s,%s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
-			//sprintf(result,"%.*s\n",t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
-			//printf("result: %.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
-			//sprintf("result","%.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "tmcStatus") == 0) {
 			sprintf(tmcStatus, "%.*s", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
