@@ -7,7 +7,7 @@
  * A small example of jsmn parsing when JSON structure is known and number of
  * tokens is predictable.
  */
-static const char *JSON_STRING = "{\"result\":0,\"data\":{\"tmcStatus\":\"11100000\",\"srvTime\":\"201612280451\"}}";
+static const char *JSON_STRING = "{\"result\":0, \"data\":{ \"tmcStatus\":\"11100000\", \"srvTime\":\"20161230230849\" } }";
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 	if (tok->type == JSMN_STRING && (int) strlen(s) == tok->end - tok->start &&
@@ -20,6 +20,10 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 int main() {
 	int i;
 	int r;
+        int result;
+	char tmcStatus[8];
+	char srvTime[14];
+
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 
@@ -39,19 +43,23 @@ int main() {
 	/* Loop over all keys of the root object */
 	for (i = 1; i < r; i++) {
 		if (jsoneq(JSON_STRING, &t[i], "result") == 0) {
-			/* We may use strndup() to fetch string value */
-			//printf("- result: %.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
-			printf("result: %.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			char tmp[1];
+			sprintf(tmp,"%.*s",t[i+1].end-t[i+1].start,JSON_STRING + t[i+1].start);
+			result = tmp[0] - '0';
+			printf("result:%d\n",result);
+		
+			//printf("- result: %s,%s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			//sprintf(result,"%.*s\n",t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			//printf("result: %.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			//sprintf("result","%.*s\n", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "tmcStatus") == 0) {
-			/* We may additionally check if the value is either "true" or "false" */
-			printf("tmcStatus: %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
+			sprintf(tmcStatus, "%.*s", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			printf("tmcStatus:%s\n",tmcStatus);
 			i++;
 		} else if(jsoneq(JSON_STRING, &t[i], "srvTime") == 0) {
-			/* We may want to do strtol() here to get numeric value */
-			printf("srvTime: %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
+			sprintf(srvTime,"%.*s", t[i+1].end-t[i+1].start, JSON_STRING + t[i+1].start);
+			printf("srvTime:%s\n",srvTime);
 			i++;
 		}
 	}
